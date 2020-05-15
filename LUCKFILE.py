@@ -9,6 +9,17 @@ Usage: install conda and luckmake, then `luckmake build`
 4. gtf and gff3 data for annotation to put into IGV
 5. genepred for annotation. genepred is better than gtf and gff3 for transcriptome annotation.
 
+CHANGELOG
+
+0.0.3
+-------
+- fixes a bug "bowtie2-build.1.bt2" not found
+- fixed "clean" to use python io functino
+
+0.0.2
+-------
+- added use_ens_gtf to trigger gtf source
+
 Feng 2020-05-15
 '''
 from luck.shorts import LSC, TSSR, NCR, RNS, DNS
@@ -17,7 +28,7 @@ from luck.shorts import LSC, TSSR, NCR, RNS, DNS
 
 ns = RNS()
 config = DNS()
-config.version        = '0.0.2'
+config.version        = '0.0.3'
 config.url_genome     = "ftp://ftp.ensemblgenomes.org/pub/plants/release-47/fasta/oryza_sativa/dna/Oryza_sativa.IRGSP-1.0.dna.toplevel.fa.gz"
 config.url_gff3       = "ftp://ftp.ensemblgenomes.org/pub/plants/release-47/gff3/oryza_sativa/Oryza_sativa.IRGSP-1.0.47.gff3.gz"
 config.url_ens_gtf    = "ftp://ftp.ensemblgenomes.org/pub/release-47/plants/gtf/oryza_sativa/Oryza_sativa.IRGSP-1.0.47.gtf.gz"
@@ -72,7 +83,7 @@ TSSR.MWF(ns,
 	'samtools faidx genome.fa')
 
 TSSR.MWF(ns,
-	'bowtie2-index.1.bt2',
+	'bowtie2-build.1.bt2',
 	'genome.fa install-deps.txt',
 	# 'bowtie2-build --threads 2 --seed 0 genome.fa bowtie2-build'
 	'bowtie2-build --threads {config.threads} --seed 0 genome.fa bowtie2-build'
@@ -141,6 +152,7 @@ NCR.MWF(ns,
 		# 'hisat2-build.1.ht2',
 		'genome.gtf genome.sorted.gtf.idx',
 		'genome.gff3',
+		'genome.genepred',
 		])
 	# 'genome.fa genome.fa.fai genome.fa.sizes '
 	# 'bowtie2-index.1.bt2 genome.gff3 genome.gtf '
@@ -156,10 +168,12 @@ NCR.MWF(ns,
 		'hisat2-build.1.ht2',
 		'genome.gtf genome.sorted.gtf.idx',
 		'genome.gff3',
+		'genome.genepred',
 		])
 	# 'genome.fa genome.fa.fai genome.fa.sizes '
 	# 'bowtie2-index.1.bt2 genome.gff3 genome.gtf '
 	)
 
 
-NCR.MWF(ns,'clean', 'rm -rf -- !(LUCKFILE.py)')
+import glob,os,shutil
+NCR.M(ns,'clean', None, lambda c: [[os.unlink(x) if os.path.isfile(x) else shutil.rmtree(x),print('[clean]%s'%x)] for x in glob.glob("./*") if not 'LUCKFILE.py' in x])

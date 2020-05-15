@@ -1,6 +1,5 @@
 language: python
 services:
-  - 
   # - go
   # - singularity
 python:
@@ -41,5 +40,5 @@ script:
     install -m 755 bin/luck* $HOME/bin
     cd ..
   - luckmake -V ## to test accessibility
-  - luckmake build
+  - #luckmake travis-build ## not enought space on travis
   - echo [DONE]
