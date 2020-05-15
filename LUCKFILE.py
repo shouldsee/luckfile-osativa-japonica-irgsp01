@@ -1,12 +1,18 @@
-from luck.shorts import LSC, TSSR, NCR, RNS, DNS
-
 '''
+
+Output: Create a reference databse for O. sativa IRGSP-1.0
+Usage: install conda and luckmake, then `luckmake build`
+
 1. genome.fasta
 2. genome.fasta.fai (which is genome.sizes)
 3. bowtie2 index
 4. gtf and gff3 data for annotation to put into IGV
 5. genepred for annotation. genepred is better than gtf and gff3 for transcriptome annotation.
+
+Feng 2020-05-15
 '''
+from luck.shorts import LSC, TSSR, NCR, RNS, DNS
+
 
 
 ns = RNS()
@@ -126,7 +132,7 @@ TSSR.MWF(ns,
 
 
 NCR.MWF(ns,
-	'build',
+	'travis-build',
 	' '.join([
 		'genome.fa',
 		'genome.fa.fai',
@@ -139,5 +145,21 @@ NCR.MWF(ns,
 	# 'genome.fa genome.fa.fai genome.fa.sizes '
 	# 'bowtie2-index.1.bt2 genome.gff3 genome.gtf '
 	)
+
+NCR.MWF(ns,
+	'build',
+	' '.join([
+		'genome.fa',
+		'genome.fa.fai',
+		'genome.fa.sizes',
+		'bowtie2-build.1.bt2',
+		'hisat2-build.1.ht2',
+		'genome.gtf genome.sorted.gtf.idx',
+		'genome.gff3',
+		])
+	# 'genome.fa genome.fa.fai genome.fa.sizes '
+	# 'bowtie2-index.1.bt2 genome.gff3 genome.gtf '
+	)
+
 
 NCR.MWF(ns,'clean', 'rm -rf -- !(LUCKFILE.py)')

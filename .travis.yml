@@ -15,7 +15,8 @@ install:
   - sudo apt-get update
   # We do this conditionally because it saves us some downloading if the
   # version is the same.
-  - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
+  - |
+    if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
       wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
     else
       wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
@@ -29,13 +30,16 @@ install:
   - conda info -a  
 script:
   - set -e
-  - TAG=0.0.6
+  - |
+    mkdir -p $HOME/bin
+    export PATH=$PATH:$HOME/bin
+    TAG=0.0.6
     # TAG=master  # for development branch
     curl -sL https://github.com/shouldsee/luck/archive/${TAG}.tar.gz -o luck-${TAG}.tar.gz
     tar -xvzf luck-${TAG}.tar.gz
     cd luck-${TAG}/
     install -m 755 bin/luck* $HOME/bin
     cd ..
-  - $HOME/luckmake -V ## to test accessibility
-  - $HOME/luckmake build
-  
+  - luckmake -V ## to test accessibility
+  - luckmake build
+  - echo [DONE]
